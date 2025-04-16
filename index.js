@@ -11,7 +11,7 @@ const path = require("path");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, `./public/uploads/`)
+      cb(null, `./public/uploads/${req.params.username}`)
     },
     filename: function (req, file, cb) {
       cb(null, Date.now()+file.originalname)
@@ -20,41 +20,75 @@ const storage = multer.diskStorage({
 
  const upload = multer({ storage:storage });
 
- const homeUpload = upload.fields([{name:'thumbnail'},{name:'banner'},{name:'logo'}]);
 
-app.post("/upload" ,upload.single('image'), (req,res) => {
-    const file = req.file;
-    return res.status(201).json({status:true,message:"success", data : "http://localhost:3000/uploads/"+file.filename});
-});
-
-app.post("/home" ,homeUpload, (req,res) => {
-    const files = req.files;
-    return res.status(201).json({
-        status:true,message:"success", 
-        data : {
-        thumbnail : files['thumbnail']?.map((item) => "http://localhost:3000/uploads/"+item.filename),
-        banner : files['banner']?.map((item) => "http://localhost:3000/uploads/"+item.filename),
-        logo : files['logo']?.map((item) => "http://localhost:3000/uploads/"+item.filename),
-        } 
-});
-
-});
-
-app.get("/gallery" , (req,res) => {
-  const filePath = path.join(__dirname , "public","uploads")
-  fs.readdir( filePath, (err,data) => {
-
-    if(err) return res.status(400).json({
-      status:false,message:err
+ let store = [];
+ app.post("/sign-up" , (req,res) => {
+  if(req.body===undefined) return res.status(403).json({status:false,message: "some fields are required."});
+  const {username,password} = req.body;
+  if(!username || !password) return res.status(403).json({status:false,message: "some fields are required."});
+  let findUser = store.find((item) => item.username === username);
+  if(findUser) return res.status(403).json({status:false,message: "username already registred."});
+  const filePath = path.join(__dirname, "public","uploads",username);
+  
+  fs.mkdir(filePath,{recursive:true}, (err)=> {
+    if(err) return res.status(403).json({status:false,message: err});
+    store.push(req.body);
+    return res.status(201).json({status:true,message: "success",data:req.body});
   })
 
+ });
 
-     return res.status(201).json({
-    status:true,message:"success", 
-    data : data?.map((item) => "http://localhost:3000/uploads/"+item) 
-});
-  } );
-})
+
+ app.post("/upload/:username", upload.single("image") , (req,res) => {
+  const {username} = req.params;
+  let findUser = store.find((item) => item.username === username);
+  if(!findUser) return res.status(404).json({status:false,message: "username not found."});
+  const file  = req.file;
+  return res.status(201).json({status:true,message: "success", data : "http://localhost:3000/uploads/"+username+"/"+file.filename});
+
+ });
+
+ 
+
+ app.get("/users" , (req,res) => {
+  return res.status(200).json({status:true,message: "success",count:store.length??0,data:store});
+ })
+
+//const homeUpload = upload.fields([{name:'thumbnail'},{name:'banner'},{name:'logo'}]);
+
+// app.post("/upload" ,upload.single('image'), (req,res) => {
+//     const file = req.file;
+//     return res.status(201).json({status:true,message:"success", data : "http://localhost:3000/uploads/"+file.filename});
+// });
+
+// app.post("/home" ,homeUpload, (req,res) => {
+//     const files = req.files;
+//     return res.status(201).json({
+//         status:true,message:"success", 
+//         data : {
+//         thumbnail : files['thumbnail']?.map((item) => "http://localhost:3000/uploads/"+item.filename),
+//         banner : files['banner']?.map((item) => "http://localhost:3000/uploads/"+item.filename),
+//         logo : files['logo']?.map((item) => "http://localhost:3000/uploads/"+item.filename),
+//         } 
+// });
+
+// });
+
+// app.get("/gallery" , (req,res) => {
+//   const filePath = path.join(__dirname , "public","uploads")
+//   fs.readdir( filePath, (err,data) => {
+
+//     if(err) return res.status(400).json({
+//       status:false,message:err
+//   })
+
+
+//      return res.status(201).json({
+//     status:true,message:"success", 
+//     data : data?.map((item) => "http://localhost:3000/uploads/"+item) 
+// });
+//   } );
+// })
 
 
 app.listen(3000, ()=> console.log("server runing at port 3000"));
