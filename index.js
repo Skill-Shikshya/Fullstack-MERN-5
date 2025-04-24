@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+require("dotenv").config()
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 require("./db/config") 
@@ -26,4 +27,4 @@ app.get("/" , (req,res) =>{
     })
 });
 
-app.listen(3000, ()=> console.log(`server running at port: ${3000}`) );
+app.listen( process.env.PORT || 3000, ()=> console.log(`server running at port: ${process.env.PORT || 3000}`) );

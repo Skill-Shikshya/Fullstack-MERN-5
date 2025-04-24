@@ -3,6 +3,8 @@ const multer  = require("multer");
 const { storage } = require("../helper/index.helper");
 const { userGet, userPost, userPut, userDelete } = require("../controller/user.controller");
 const { otpVerify, otpGenerate } = require("../controller/otp.controller");
+const { auth } = require("../middelware/auth.middelware");
+const { authLogin } = require("../controller/auth.controller");
 const userRouter  = new express.Router();
 
 
@@ -11,7 +13,7 @@ const userRouter  = new express.Router();
  const upload = multer({ storage:storage }); // upload works as middelware
 
 
-userRouter.get("/users", userGet );
+userRouter.get("/users" , auth , userGet ); // auth is a middelware for route protecation
 userRouter.post("/users", upload.single("profileImage"), userPost );
 userRouter.put("/users/:id", upload.single("profileImage"),  userPut );
 userRouter.delete("/users/:id", userDelete );
@@ -19,6 +21,8 @@ userRouter.delete("/users/:id", userDelete );
 
 userRouter.post("/otp-verify", otpVerify );
 userRouter.post("/otp-generate", otpGenerate );
+
+userRouter.post("/login", authLogin );
 
 
 

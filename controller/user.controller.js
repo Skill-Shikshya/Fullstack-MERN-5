@@ -1,6 +1,7 @@
-const { store } = require("../helper/index.helper");
+const { store, deletefile } = require("../helper/index.helper");
 const { User } = require("../schema/users.schema");
-
+const fs = require("fs");
+const path = require("path");
 const userGet = async (req,res) => {
     const data = await User.find(); // => SELECT * from users
 
@@ -61,6 +62,11 @@ const userPut = async (req,res) => {
     let profileImage = findUser.profileImage;
     if(req.file) {
         profileImage = 'http://localhost:3000/uploads/'+req.file.filename;
+        
+        if(findUser.profileImage) {
+            deletefile(findUser.profileImage)
+        };
+        
     };
 
 
@@ -74,7 +80,7 @@ const userPut = async (req,res) => {
         status : true,
         message : "success",
         data : findUser
-    })
+    });
 };
 
 
