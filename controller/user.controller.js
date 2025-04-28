@@ -9,6 +9,7 @@ const userGet = async (req,res) => {
         status : true,
         message : "success, from user controller",
         count: data.length,
+        requestedBy: req.rootUser.fullName,
         data : data
     })
 };

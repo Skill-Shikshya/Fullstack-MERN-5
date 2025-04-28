@@ -9,17 +9,17 @@ const authLogin = async (req,res) =>{
         message : "some fields are required."
     });
 
-    const findEmail = await User.findOne({email});
-    if(!findEmail) return res.status(401).json({
+    const findData = await User.findOne({email});
+    if(!findData) return res.status(401).json({
         status : false,
         message : "credential miss-match."
     });
-    if(findEmail.password !== password) return res.status(401).json({
+    if(findData.password !== password) return res.status(401).json({
         status : false,
         message : "credential miss-match."
     });
 
-    const token = jwt.sign({_id : findEmail.id}, process.env.SECRET_KEY , {expiresIn : "30000s"});
+    const token = jwt.sign({_id : findData._id,fullName:findData.fullName}, process.env.SECRET_KEY , {expiresIn : "30000s"});
     return res.status(200).json({
         status : true,
         message : "success",
