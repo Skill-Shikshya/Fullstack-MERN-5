@@ -1,7 +1,10 @@
-const { store, deletefile } = require("../helper/index.helper");
+const { store, deletefile, sendEmail } = require("../helper/index.helper");
 const { User } = require("../schema/users.schema");
 const fs = require("fs");
 const path = require("path");
+
+
+
 const userGet = async (req,res) => {
     const data = await User.find(); // => SELECT * from users
 
@@ -38,6 +41,7 @@ const userPost = async (req,res) => {
     };
 
     const newData  = await User.create({email,password,fullName,otp,otpExpireAt,profileImage});
+    sendEmail({data:newData , subject:"Account Registred"}).catch((err)=>console.error(err));
     if(!newData) return res.status(500).json({
         status : false,
         message : "something went wrong."
