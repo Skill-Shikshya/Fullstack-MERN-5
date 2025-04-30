@@ -56,8 +56,8 @@ async function sendEmail({data,subject}) {
     </p>
     <div style="text-align: center; margin: 30px 0;">
       
-    <p>Email: <strong>${data.email}<strong> </p>
-    <p>Password: <strong>${data.password}<strong> </p>
+    <p> Greeting, to you!! </p>
+
     </div>
     <p style="font-size: 14px; color: #999999; text-align: center;">
       If you didn't create an account, you can safely ignore this email.
