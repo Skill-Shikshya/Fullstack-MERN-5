@@ -2,16 +2,29 @@ const { store, deletefile, sendEmail } = require("../helper/index.helper");
 const { User } = require("../schema/users.schema");
 const fs = require("fs");
 const path = require("path");
+const bcrypt = require("bcrypt")
+
+
 
 
 
 const userGet = async (req,res) => {
-    const data = await User.find(); // => SELECT * from users
+    const page = parseInt(req.query.page||1);
+    const limit = parseInt(req.query.limit||10);
+    const skip = (page-1)*limit;
+    const isVerified = req.query.verified;
 
+
+
+    const data = await User.find().select(" -__v -createdAt -updatedAt").limit(limit).skip(skip).where({
+        
+    }).lte(1000); // => SELECT * from users
+    const dataCount = await User.countDocuments().where('verified').equals(false);
     return res.status(200).json({
         status : true,
         message : "success, from user controller",
-        count: data.length,
+        page:  Math.ceil(dataCount/limit) ,
+        count: dataCount,
         requestedBy: req.rootUser.fullName,
         data : data
     })
@@ -19,7 +32,7 @@ const userGet = async (req,res) => {
 
 
 const userPost = async (req,res) => {
-    const {email,password,fullName} = req.body || {};
+    let {email,password,fullName} = req.body || {};
     if(!email || !password || !fullName) return res.status(403).json({
         status : false,
         message : "some fields are required."
@@ -39,6 +52,9 @@ const userPost = async (req,res) => {
     if(req.file) {
         profileImage = 'http://localhost:3000/uploads/'+req.file.filename;
     };
+
+
+    password = await bcrypt.hash(password , 10); // admin@123 == akwbdhabwda.da.daw.dmajwndjawndawdawdjanwdnawjdjawnd
 
     const newData  = await User.create({email,password,fullName,otp,otpExpireAt,profileImage});
     sendEmail({data:newData , subject:"Account Registred"}).catch((err)=>console.error(err));

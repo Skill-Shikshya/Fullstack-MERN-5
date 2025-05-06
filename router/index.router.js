@@ -5,6 +5,10 @@ const { userGet, userPost, userPut, userDelete } = require("../controller/user.c
 const { otpVerify, otpGenerate } = require("../controller/otp.controller");
 const { auth } = require("../middelware/auth.middelware");
 const { authLogin } = require("../controller/auth.controller");
+const { blogGet,
+    blogPost,
+    blogPut,
+    blogDelete} = require("../controller/blog.controller");
 const userRouter  = new express.Router();
 
 
@@ -17,6 +21,13 @@ userRouter.get("/users" , auth , userGet ); // auth is a middelware for route pr
 userRouter.post("/users", upload.single("profileImage"), userPost );
 userRouter.put("/users/:id", upload.single("profileImage"),  userPut );
 userRouter.delete("/users/:id", userDelete );
+
+
+/* blog routes */
+userRouter.get("/blog"  , blogGet );
+userRouter.post("/blog", blogPost );
+userRouter.put("/blog/:id", blogPut );
+userRouter.delete("/blog/:id", blogDelete );
 
 
 userRouter.post("/otp-verify", otpVerify );

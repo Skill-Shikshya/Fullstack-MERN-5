@@ -1,28 +1,42 @@
 const express = require("express");
 const app = express();
 require("dotenv").config()
+const morgan = require("morgan");
+const compression = require('compression');
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 require("./db/config") 
 const {userRouter} = require("./router/index.router");
-app.use(express.json());
+app.use(morgan("combined"));
 app.use(express.static('./public/'));
+app.use(compression({ filter: shouldCompress }))
 const cron = require('node-cron');
 const { sendEmail } = require("./helper/index.helper");
 const { User } = require("./schema/users.schema");
 
 
 
+app.use(express.json())
 app.use(userRouter);
 
+function shouldCompress (req, res) {
+    if (req.headers['x-no-compression']) {
+      // don't compress responses with this request header
+      return false
+    }
+  
+    // fallback to standard filter function
+    return compression.filter(req, res)
+  }
 
 
-// corn send greeting email template
+
+// corn send greeting email template 
 
 cron.schedule('*/1 * * * *', async() => {
-     sendEmail({data : {email : "sicid64642@ancewa.com", fullName:"Rahul Sharma"} , subject : "Greeting from App"});
+  // console.log("Cron running", new Date());
+  // sendEmail({data : {email : "aayush@vrittechnologies.com,aayushmaharjan75@gmail.com", fullName:"Rahul Sharma"} , subject : "Greeting from App ok test"});
 });
-  
 
 
 // Load YAML Swagger file
