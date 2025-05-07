@@ -16,9 +16,7 @@ const userGet = async (req,res) => {
 
 
 
-    const data = await User.find().select(" -__v -createdAt -updatedAt").limit(limit).skip(skip).where({
-        
-    }).lte(1000); // => SELECT * from users
+    const data = await User.find(); // => SELECT * from users
     const dataCount = await User.countDocuments().where('verified').equals(false);
     return res.status(200).json({
         status : true,

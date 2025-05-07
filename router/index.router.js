@@ -9,6 +9,7 @@ const { blogGet,
     blogPost,
     blogPut,
     blogDelete} = require("../controller/blog.controller");
+const { cartGet, cartPost, cartUserGet } = require("../controller/cart.controller");
 const userRouter  = new express.Router();
 
 
@@ -28,6 +29,12 @@ userRouter.get("/blog"  , blogGet );
 userRouter.post("/blog", blogPost );
 userRouter.put("/blog/:id", blogPut );
 userRouter.delete("/blog/:id", blogDelete );
+
+
+/* cart routes */
+userRouter.get("/cart"  , cartGet );
+userRouter.post("/cart", cartPost );
+userRouter.get("/cart/user", cartUserGet );
 
 
 userRouter.post("/otp-verify", otpVerify );
