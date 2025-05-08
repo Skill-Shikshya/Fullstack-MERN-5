@@ -16,9 +16,6 @@ const storage = multer.diskStorage({
     }
   });
 
-
-
-
 const deletefile = (filename) =>{
     fs.unlink(filename.replace("http://localhost:3000/uploads/", 'public/uploads/') , (err)=>{
         if(err){
@@ -29,8 +26,6 @@ const deletefile = (filename) =>{
         }
     })
 }
-
-
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -83,18 +78,14 @@ async function sendEmail({data,subject}) {
 }
 
 
-async function sendWelcome({data,subject}) {
+async function sendTemplateEmail({data,subject,template="invoice"}) {
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: '"Vrit Techchnologies" <test9812334@gmail.com>', // sender address
     to: data.email,
     subject: subject,
-    template: "invoice",
-    context : {
-      name : "Test User",
-      otp: 454545,
-      age:55
-    }
+    template: template,
+    context : data
   });
 
   console.log("Message sent: %s", info.messageId);
@@ -108,5 +99,5 @@ module.exports = {
     deletefile,
     transporter,
     sendEmail,
-    sendWelcome
+    sendTemplateEmail
 }

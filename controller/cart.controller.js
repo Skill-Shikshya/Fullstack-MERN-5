@@ -1,3 +1,4 @@
+const { sendTemplateEmail } = require("../helper/index.helper");
 const { Cart } = require("../schema/cart.schema");
 
 const cartGet = async (req,res) =>{
@@ -12,7 +13,7 @@ const cartGet = async (req,res) =>{
     return res.status(200).json({
         status : true,
         message : "success",
-        count: data.length,
+        count: length,
         data : data
     })
 };
@@ -68,12 +69,41 @@ const cartUserGet = async (req,res) =>{
 
 
 const cartPost = async (req,res) => {
-    let {userId,amount} = req.body || {};
+    let {userId,productName,
+                name,
+                vendorName,
+                total,
+                due_date,
+                action_url,
+                description,
+                amount,
+                accountName,
+                email,
+
+    } = req.body || {};
     if(!userId || !amount) return res.status(403).json({
         status : false,
         message : "some fields are required."
     });
     const newData  = await Cart.create({userId,amount});
+      
+    sendTemplateEmail({
+        data : {
+                productName,
+                name,
+                vendorName,
+                total,
+                due_date,
+                action_url,
+                description,
+                amount,
+                email,
+                accountName,
+        },
+        subject: `Invoce for product ${productName}`,
+        template:"invoice"
+    })
+    
     if(!newData) return res.status(500).json({
         status : false,
         message : "something went wrong."

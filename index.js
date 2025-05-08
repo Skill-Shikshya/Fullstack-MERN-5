@@ -33,9 +33,9 @@ function shouldCompress (req, res) {
 
 // corn send greeting email template 
 
-cron.schedule('*/30 * * * * *', async() => {
+cron.schedule('* * * * *', async() => {
   // console.log("Cron running", new Date());
-  sendWelcome({data : {email : "rahul@vrittechnologies.com", fullName:"Rahul Sharma"} , subject : "Greeting from App ok test"});
+  // sendWelcome({data : {email : "rahul@vrittechnologies.com", fullName:"Rahul Sharma"} , subject : "Greeting from App ok test"});
 });
 
 

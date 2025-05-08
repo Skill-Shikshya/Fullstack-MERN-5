@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Email</title>
+</head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f6f8;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f4f6f8;">
     <tr>
@@ -11,28 +17,28 @@
           </tr>
           <tr>
             <td style="padding: 20px;">
-              <p style="font-size: 16px;">Hi <strong>{{name}}</strong>,</p>
-              <p style="color: #555;">Thanks for using {{vendorName}}. This is an invoice for your recent purchase.</p>
+              <p style="font-size: 16px;">Hi <strong>{$name}</strong>,</p>
+              <p style="color: #555;">Thanks for using {$account.name}. This is an invoice for your recent purchase.</p>
 
               <table style="width: 100%; background-color: #f0f4f8; padding: 15px; margin: 20px 0; border-radius: 6px;">
                 <tr>
                   <td style="font-weight: bold;">Amount Due:</td>
-                  <td style="text-align: right;">{{total}}</td>
+                  <td style="text-align: right;">{$total}</td>
                 </tr>
                 <tr>
                   <td style="font-weight: bold;">Due By:</td>
-                  <td style="text-align: right;">{{due_date}}</td>
+                  <td style="text-align: right;">{$due_date}</td>
                 </tr>
               </table>
 
               <div style="text-align: center; margin-bottom: 20px;">
-                <a href={{action_url}} style="background-color: #0066ff; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">Pay Invoice</a>
+                <a href="{$action_url}" style="background-color: #0066ff; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">Pay Invoice</a>
               </div>
 
               <table style="width: 100%; margin-top: 20px;">
                 <tr>
-                  <td><strong>{{invoice_id}}</strong></td>
-                  <td style="text-align: right;"><strong>{{date}}</strong></td>
+                  <td><strong>{$invoice_id}</strong></td>
+                  <td style="text-align: right;"><strong>{$date}</strong></td>
                 </tr>
               </table>
 
@@ -42,28 +48,28 @@
                   <td style="text-align: right;">Amount</td>
                 </tr>
                 <tr>
-                  <td>{{description}}</td>
-                  <td style="text-align: right;">{{amount}}</td>
+                  <td>{$description}</td>
+                  <td style="text-align: right;">{$amount}</td>
                 </tr>
                 <tr>
                   <td><strong>Total</strong></td>
-                  <td style="text-align: right;"><strong>{{total}}</strong></td>
+                  <td style="text-align: right;"><strong>{$total}</strong></td>
                 </tr>
               </table>
 
               <p style="margin-top: 30px;">If you have any questions about this invoice, simply reply to this email or reach out to our <a href="#">support team</a> for help.</p>
 
-              <p>Cheers, <br>The {{accountName}} Team</p>
+              <p>Cheers, <br>The {$account.name} Team</p>
 
               <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
 
               <p style="font-size: 14px; color: #777;">If you’re having trouble with the button above, copy and paste the URL below into your web browser:</p>
-              <p style="word-break: break-all; font-size: 14px; color: #555;">{{action_url}}</p>
+              <p style="word-break: break-all; font-size: 14px; color: #555;">{$action_url}</p>
             </td>
           </tr>
           <tr>
             <td align="center" style="padding: 20px; font-size: 12px; color: #888;">
-              © 2020 {{accountName}}. All rights reserved.<br>
+              © 2020 {$account.name}. All rights reserved.<br>
               1234 Street Rd. Suite 1234<br>
               City, State, ZIP Code
             </td>
@@ -73,4 +79,4 @@
     </tr>
   </table>
 </body>
-
+</html>
