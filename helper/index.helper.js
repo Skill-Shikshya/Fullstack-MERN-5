@@ -1,5 +1,8 @@
 const multer = require("multer");
 const nodemailer = require("nodemailer");
+const { default: hbs } = require("nodemailer-express-handlebars");
+const fs = require('fs');
+const path = require("path");
 
 const store = [{id:1,name:"Rahul"},{id:2,name:"Ram"},{id:3,name:"Sham"},{id:4,name:"hari"}];
 
@@ -16,7 +19,6 @@ const storage = multer.diskStorage({
 
 
 
-  const fs = require('fs')
 const deletefile = (filename) =>{
     fs.unlink(filename.replace("http://localhost:3000/uploads/", 'public/uploads/') , (err)=>{
         if(err){
@@ -38,6 +40,16 @@ const transporter = nodemailer.createTransport({
       pass: 'ziphcsedbavawzvz'
   }
 });
+
+transporter.use('compile', hbs({
+  viewEngine : {
+    extname : '.handlebars',
+    partialsDir: path.join(__dirname, '..', 'view', 'emails'),
+    defaultLayout : false,
+  },
+  viewPath: path.join(__dirname, '..', 'view', 'emails'),
+  extName : '.handlebars',
+}))
 
 
 async function sendEmail({data,subject}) {
@@ -71,10 +83,30 @@ async function sendEmail({data,subject}) {
 }
 
 
+async function sendWelcome({data,subject}) {
+  // send mail with defined transport object
+  const info = await transporter.sendMail({
+    from: '"Vrit Techchnologies" <test9812334@gmail.com>', // sender address
+    to: data.email,
+    subject: subject,
+    template: "invoice",
+    context : {
+      name : "Test User",
+      otp: 454545,
+      age:55
+    }
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+}
+
+
 module.exports = {
     store,
     storage,
     deletefile,
     transporter,
-    sendEmail
+    sendEmail,
+    sendWelcome
 }

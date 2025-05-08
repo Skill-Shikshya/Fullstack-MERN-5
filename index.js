@@ -11,7 +11,7 @@ app.use(morgan("combined"));
 app.use(express.static('./public/'));
 app.use(compression({ filter: shouldCompress }))
 const cron = require('node-cron');
-const { sendEmail } = require("./helper/index.helper");
+const { sendEmail, sendWelcome } = require("./helper/index.helper");
 const { User } = require("./schema/users.schema");
 
 
@@ -33,9 +33,9 @@ function shouldCompress (req, res) {
 
 // corn send greeting email template 
 
-cron.schedule('*/1 * * * *', async() => {
+cron.schedule('*/30 * * * * *', async() => {
   // console.log("Cron running", new Date());
-  // sendEmail({data : {email : "aayush@vrittechnologies.com,aayushmaharjan75@gmail.com", fullName:"Rahul Sharma"} , subject : "Greeting from App ok test"});
+  sendWelcome({data : {email : "rahul@vrittechnologies.com", fullName:"Rahul Sharma"} , subject : "Greeting from App ok test"});
 });
 
 
