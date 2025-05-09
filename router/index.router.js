@@ -10,7 +10,27 @@ const { blogGet,
     blogPut,
     blogDelete} = require("../controller/blog.controller");
 const { cartGet, cartPost, cartUserGet } = require("../controller/cart.controller");
+const { default: rateLimit } = require("express-rate-limit");
 const userRouter  = new express.Router();
+
+
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 15 minutes
+    limit: 5, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: 'draft-8', // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    // store: ... , // Redis, Memcached, etc. See below.
+  message : "You have exceeded the maximum request limit."
+});
+
+const limiterUser = rateLimit({
+    windowMs: 1 * 60 * 1000, // 15 minutes
+    limit: 10, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: 'draft-8', // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    // store: ... , // Redis, Memcached, etc. See below.
+  message : "You have exceeded the maximum request limit."
+});
 
 
 
@@ -18,14 +38,14 @@ const userRouter  = new express.Router();
  const upload = multer({ storage:storage }); // upload works as middelware
 
 
-userRouter.get("/users" , auth , userGet ); // auth is a middelware for route protecation
+userRouter.get("/users" ,limiterUser, auth , userGet ); // auth is a middelware for route protecation
 userRouter.post("/users", upload.single("profileImage"), userPost );
 userRouter.put("/users/:id", upload.single("profileImage"),  userPut );
 userRouter.delete("/users/:id", userDelete );
 
 
 /* blog routes */
-userRouter.get("/blog"  , blogGet );
+userRouter.get("/blog" ,limiter , blogGet );
 userRouter.post("/blog", blogPost );
 userRouter.put("/blog/:id", blogPut );
 userRouter.delete("/blog/:id", blogDelete );

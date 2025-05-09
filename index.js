@@ -11,10 +11,16 @@ app.use(morgan("combined"));
 app.use(express.static('./public/'));
 app.use(compression({ filter: shouldCompress }))
 const cron = require('node-cron');
-const { sendEmail, sendWelcome } = require("./helper/index.helper");
-const { User } = require("./schema/users.schema");
+const {rateLimit} = require("express-rate-limit");
 
 
+// const { sendEmail, sendWelcome } = require("./helper/index.helper");
+// const { User } = require("./schema/users.schema");
+
+
+
+
+// app.use(limiter);  //gllobally
 
 app.use(express.json())
 app.use(userRouter);
