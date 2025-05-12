@@ -1,0 +1,4 @@
+::1 - GET /blog 200 - - 88.752 ms
+::1 - GET /blog 200 - - 84.983 ms
+::1 - GET /blog 200 - - 89.986 ms
+::1 - GET /blog 200 - - 90.437 ms

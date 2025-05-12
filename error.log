@@ -1,0 +1,5 @@
+::1 - GET /users 500 933 - 1.910 ms
+::1 - GET /users 500 933 - 1.848 ms
+::1 - GET /users 500 933 - 2.972 ms
+::1 - GET /users 500 933 - 3.036 ms
+::1 - GET /users 500 933 - 2.117 ms

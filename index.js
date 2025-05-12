@@ -7,23 +7,71 @@ const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 require("./db/config") 
 const {userRouter} = require("./router/index.router");
-app.use(morgan("combined"));
+const fs = require("fs");
+
+
 app.use(express.static('./public/'));
 app.use(compression({ filter: shouldCompress }))
 const cron = require('node-cron');
 const {rateLimit} = require("express-rate-limit");
+const path = require("path");
+
+
+/* ==== serve logging start ==== */
+
+app.set('trust proxy', true);
+// maintain logs in access.log file
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),{
+    flags : 'a'
+  }
+);
+
+const errorLogStream = fs.createWriteStream(
+  path.join(__dirname, "error.log"),{
+    flags : 'a'
+  }
+);
+
+const logFormat = ':remote-addr - :method :url :status :res[content-length] - :response-time ms';
+morgan.token('status' , (req,res) => res.statusCode);
+app.use(morgan(logFormat, {
+  skip: (req, res) => res.statusCode >= 400,  // Skip if statusCode >= 400 (error)
+  stream: accessLogStream
+}));
+
+// Set up logging for error requests (status code >= 400)
+app.use(morgan(logFormat, {
+  skip: (req, res) => res.statusCode < 400,   // Skip if statusCode < 400 (success)
+  stream: errorLogStream
+}));
+
+/* ==== serve logging end ==== */
+
+
+
+app.use(express.json())
+app.use(userRouter);
+
+
+
+
+
+
+
+
+
+
+
 
 
 // const { sendEmail, sendWelcome } = require("./helper/index.helper");
 // const { User } = require("./schema/users.schema");
-
-
-
-
 // app.use(limiter);  //gllobally
 
-app.use(express.json())
-app.use(userRouter);
+
+
+
 
 function shouldCompress (req, res) {
     if (req.headers['x-no-compression']) {
